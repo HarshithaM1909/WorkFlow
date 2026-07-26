@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: workflow
+    env: python
+    plan: free
+    rootDir: myapp
+    buildCommand: >-
+      pip install uv &&
+      uv sync --locked &&
+      uv run python manage.py collectstatic --noinput
+    preDeployCommand: uv run python manage.py migrate --noinput
+    startCommand: uv run gunicorn myapp.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: 127.0.0.1,localhost
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false

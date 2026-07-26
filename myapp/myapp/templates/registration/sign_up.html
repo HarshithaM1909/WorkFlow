@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <span class="brand-mark"><i class="bi bi-hexagon-fill"></i></span>
+                <h2 class="mb-0">Create your account</h2>
+                <p class="text-muted-soft mb-0">Join WorkFlow</p>
+            </div>
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{form | crispy}}
+                        <div class="d-grid mt-2">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-person-check-fill"></i> Register</button>
+                        </div>
+                    </form>
+                    <p class="text-center text-muted-soft mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

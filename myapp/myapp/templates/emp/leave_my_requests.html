@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load emp_extras %}
+{% block title %}My Leave Requests{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-calendar2-week-fill"></i></span> My Leave Requests</h1>
+                <p class="page-subtitle mb-0">Track the status of your submitted requests.</p>
+            </div>
+            <a href="/emp/leave/request/" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Request Leave</a>
+        </div>
+
+        <div class="table-responsive-card">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Reviewer Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leave_requests %}
+                    <tr>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td class="text-muted-soft">{{ leave.reason }}</td>
+                        <td><span class="badge-soft" data-tone="{{ leave.status|status_tone }}">{{ leave.get_status_display }}</span></td>
+                        <td class="text-muted-soft">{{ leave.review_note|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted-soft py-4">No leave requests yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

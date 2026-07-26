@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 offset-md-2 col-lg-6 offset-lg-3">
+                <div class="page-header">
+                    <div>
+                        <h1><span class="page-icon"><i class="bi bi-megaphone-fill"></i></span> Feedback</h1>
+                        <p class="page-subtitle mb-0">Tell us what's working and what isn't.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-4">
+                        <form action="/emp/feedback/" method="post">
+                            {% csrf_token %}
+
+                            {{form.as_p}}
+
+                            <div class="d-grid mt-3">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

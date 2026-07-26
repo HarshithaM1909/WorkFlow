@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load emp_extras %}
+{% block title %}Attendance History{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-clock-history"></i></span> Attendance History</h1>
+                {% if employee %}
+                    <p class="page-subtitle mb-0">{{ employee.name }} ({{ employee.emp_id }})</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if not employee %}
+            <div class="card"><div class="card-body text-center text-muted-soft py-5">
+                No employee profile linked to your account, and no employee selected.
+            </div></div>
+        {% else %}
+            <div class="table-responsive-card">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td>{{ record.date }}</td>
+                            <td><span class="badge-soft" data-tone="{{ record.status|status_tone }}">{{ record.get_status_display }}</span></td>
+                            <td class="text-muted-soft">{{ record.marked_by|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted-soft py-4">No attendance records yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

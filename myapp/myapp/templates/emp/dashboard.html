@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-bar-chart-fill"></i></span> Dashboard</h1>
+                <p class="page-subtitle mb-0">Headcount and attendance analytics across your team.</p>
+            </div>
+        </div>
+
+        <form method="GET" class="row g-2 mb-4"
+              hx-get="/emp/dashboard/" hx-target="#dashboard-content" hx-trigger="change" hx-push-url="true">
+            <div class="col-auto">
+                <select name="role" class="form-select">
+                    <option value="">All Roles</option>
+                    {% for value, label in roles %}
+                        <option value="{{ value }}" {% if value == selected_role %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <select name="days" class="form-select">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+                </select>
+            </div>
+        </form>
+
+        <div id="dashboard-content">
+            {% include 'emp/partials/dashboard_content.html' %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="{% static 'emp/js/dashboard_charts.js' %}"></script>
+{% endblock %}

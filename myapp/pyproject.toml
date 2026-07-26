@@ -1,0 +1,29 @@
+[project]
+name = "myapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "Django>=6.0,<7.0",
+    "dj-database-url",
+    "python-decouple",
+    "django-crispy-forms",
+    "crispy-bootstrap5",
+    "psycopg2-binary",
+    "pyisemail",
+    "Pillow",
+    "gunicorn",
+    "whitenoise",
+    "djangorestframework>=3.17.1",
+    "django-filter>=26.1",
+    "drf-spectacular>=0.30.0",
+    "django-htmx>=1.28.0",
+]
+
+[tool.uv]
+package = false
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-calendar-check-fill"></i></span> Mark Attendance</h1>
+                <p class="page-subtitle mb-0">Record today's attendance for your team.</p>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <form method="GET" class="input-group" style="max-width: 260px;">
+                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                <input type="date" name="date" class="form-control" value="{{ selected_date|date:'Y-m-d' }}">
+                <button type="submit" class="btn btn-outline-secondary">Go</button>
+            </form>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            <div class="table-responsive-card mb-3">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Emp ID</th>
+                            <th style="width: 220px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td class="fw-medium">{{ row.emp.name }}</td>
+                            <td class="text-muted-soft">{{ row.emp.emp_id }}</td>
+                            <td>
+                                <select name="status_{{ row.emp.id }}" class="form-select form-select-sm">
+                                    {% for value, label in statuses %}
+                                        <option value="{{ value }}" {% if value == row.status %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted-soft py-4">No employees found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle-fill"></i> Save Attendance</button>
+        </form>
+    </div>
+{% endblock %}

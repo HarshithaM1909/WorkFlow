@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Update Employee{% endblock %}
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 offset-md-2 col-lg-6 offset-lg-3">
+
+          <div class="page-header">
+              <div>
+                  <h1><span class="page-icon"><i class="bi bi-pencil-square"></i></span> Update Employee</h1>
+                  <p class="page-subtitle mb-0">Editing {{ emp.name }} ({{ emp.emp_id }})</p>
+              </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body p-4">
+
+              <form action="/emp/update-emp/{{ emp.id }}" method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                  <label for="name" class="form-label">Employee name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    class="form-control"
+                    name="emp_name"
+                    value="{{ emp.name }}"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="id" class="form-label">Employee ID</label>
+                  <input
+                    id="id"
+                    type="text"
+                    class="form-control"
+                    name="emp_id"
+                    value="{{ emp.emp_id }}"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Phone number</label>
+                  <input
+                    id="phone"
+                    type="text"
+                    class="form-control"
+                    name="emp_phone"
+                    value="{{ emp.phone }}"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <textarea
+                    name="emp_address"
+                    id="address"
+                    class="form-control"
+                    rows="4"
+                  >{{ emp.address }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label for="role" class="form-label">Role</label>
+                  <select name="emp_role" id="role" class="form-select">
+                    <option value="">-- Select a role --</option>
+                    {% for value, label in roles %}
+                        <option value="{{ value }}" {% if value == emp.role %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="mb-4 form-check form-switch">
+                  <input
+                    id="working"
+                    type="checkbox"
+                    class="form-check-input"
+                    role="switch"
+                    name="emp_working"
+                    {% if emp.working %}checked{% endif %}
+                  />
+                  <label for="working" class="form-check-label">Currently working</label>
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle-fill"></i> Update Employee
+                  </button>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Testimonials{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-chat-quote-fill"></i></span> Testimonials</h1>
+                <p class="page-subtitle mb-0">What the team has to say.</p>
+            </div>
+        </div>
+
+        <!-- Add Testimonial -->
+        <div class="card mb-4">
+            <details>
+                <summary class="card-header d-flex align-items-center gap-2" style="cursor: pointer; list-style: none;">
+                    <i class="bi bi-plus-circle-fill text-primary"></i>
+                    <span class="fw-medium">Add Your Testimonial</span>
+                </summary>
+                <div class="card-body">
+                    <form action="/emp/add-testimonials/" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mb-0">
+                            {% for field in form %}
+                                {% if field.errors %}<li><b>{{ field.label }}</b>: {{ field.errors|striptags }}</li>{% endif %}
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            <div class="text-danger small">{{ form.name.errors }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.testimonial.id_for_label }}" class="form-label">{{ form.testimonial.label }}</label>
+                            {{ form.testimonial }}
+                            <div class="text-danger small">{{ form.testimonial.errors }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.rating.id_for_label }}" class="form-label">{{ form.rating.label }}</label>
+                            {{ form.rating }}
+                            <div class="text-danger small">{{ form.rating.errors }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.picture.id_for_label }}" class="form-label">{{ form.picture.label }}</label>
+                            {{ form.picture }}
+                            <div class="text-danger small">{{ form.picture.errors }}</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> Submit Testimonial</button>
+                        <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+
+        <!-- View Testimonials -->
+        <div class="row g-3">
+            {% for t in testi %}
+            <div class="col-md-6 col-lg-4">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img class="testimonial-avatar" src="/media/{{t.picture}}" alt="{{t.name}}">
+                        <div>
+                            <div class="fw-medium">{{t.name}}</div>
+                            <div class="testimonial-stars">
+                                {% for n in "12345" %}<i class="bi {% if forloop.counter <= t.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>{% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-muted-soft mb-0">&ldquo;{{t.testimonial}}&rdquo;</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="card"><div class="card-body text-center text-muted-soft py-5">No testimonials yet.</div></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

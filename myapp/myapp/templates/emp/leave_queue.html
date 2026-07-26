@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Leave Queue{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><span class="page-icon"><i class="bi bi-inbox-fill"></i></span> Pending Leave Requests</h1>
+                <p class="page-subtitle mb-0">Review and act on requests awaiting approval.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive-card">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Reason</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="leave-queue-body">
+                    {% for leave in leave_requests %}
+                    <tr>
+                        <td class="fw-medium">{{ leave.employee.name }}</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td class="text-muted-soft">{{ leave.reason }}</td>
+                        <td class="text-end">
+                            <form method="post" action="/emp/leave/{{ leave.id }}/approve/" class="d-inline"
+                                  hx-post="/emp/leave/{{ leave.id }}/approve/" hx-target="closest tr" hx-swap="outerHTML">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
+                            </form>
+                            <form method="post" action="/emp/leave/{{ leave.id }}/reject/" class="d-inline"
+                                  hx-post="/emp/leave/{{ leave.id }}/reject/" hx-target="closest tr" hx-swap="outerHTML">
+                                {% csrf_token %}
+                                <input type="text" name="note" class="form-control form-control-sm d-inline-block" style="width:140px;" placeholder="Reason (optional)">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted-soft py-4">No pending leave requests.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

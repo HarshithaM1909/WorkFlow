@@ -1,0 +1,68 @@
+<nav class="navbar navbar-expand-lg app-navbar sticky-top">
+  <div class="container-fluid px-3 px-lg-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/emp/home/">
+      <span class="brand-mark"><i class="bi bi-hexagon-fill"></i></span>
+      WorkFlow
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/emp/home/"><i class="bi bi-people-fill"></i> Employees</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/add-emp/"><i class="bi bi-person-plus-fill"></i> Add Employee</a>
+        </li>
+        {% if perms.emp.view_dashboard %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/dashboard/"><i class="bi bi-bar-chart-fill"></i> Dashboard</a>
+        </li>
+        {% endif %}
+        {% if perms.emp.add_attendance %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/attendance/mark/"><i class="bi bi-calendar-check-fill"></i> Mark Attendance</a>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/attendance/history/"><i class="bi bi-clock-history"></i> My Attendance</a>
+        </li>
+        {% endif %}
+        {% if perms.emp.approve_leaverequest %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/leave/queue/"><i class="bi bi-inbox-fill"></i> Leave Queue</a>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/leave/my-requests/"><i class="bi bi-calendar2-week-fill"></i> My Leave</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/testimonials/"><i class="bi bi-chat-quote-fill"></i> Testimonials</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/emp/feedback/"><i class="bi bi-megaphone-fill"></i> Feedback</a>
+        </li>
+      </ul>
+    </div>
+    <div class="d-flex align-items-center ms-auto gap-2">
+        {% if user.is_authenticated %}
+            <span class="user-chip">
+                <span class="avatar">{{ user.username|slice:":1"|upper }}</span>
+                {{ user.username }}
+            </span>
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary btn-sm" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        {% else %}
+            <a class="btn btn-primary btn-sm" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+        {% endif %}
+    </div>
+  </div>
+</nav>

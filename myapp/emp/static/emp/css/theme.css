@@ -1,0 +1,422 @@
+/* WorkFlow — dark, IT-professional theme built on top of Bootstrap 5's dark mode. */
+
+:root {
+    --wf-bg: #0b0e14;
+    --wf-surface: #12161f;
+    --wf-surface-2: #171c27;
+    --wf-border: #262c3a;
+    --wf-border-soft: #1d2330;
+    --wf-text: #e6eaf2;
+    --wf-text-muted: #8b93a7;
+    --wf-accent: #3b82f6;
+    --wf-accent-hover: #5b93f7;
+    --wf-accent-soft: rgba(59, 130, 246, 0.14);
+    --wf-success: #22c55e;
+    --wf-success-soft: rgba(34, 197, 94, 0.14);
+    --wf-danger: #ef4444;
+    --wf-danger-soft: rgba(239, 68, 68, 0.14);
+    --wf-warning: #f59e0b;
+    --wf-warning-soft: rgba(245, 158, 11, 0.14);
+    --wf-neutral: #64748b;
+    --wf-neutral-soft: rgba(100, 116, 139, 0.16);
+    --wf-radius: 0.65rem;
+    --wf-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+html, body {
+    background-color: var(--wf-bg);
+    color: var(--wf-text);
+}
+
+body {
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    letter-spacing: 0.1px;
+}
+
+::selection {
+    background: var(--wf-accent-soft);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--wf-bg); }
+::-webkit-scrollbar-thumb { background: var(--wf-border); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--wf-neutral); }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+a { color: var(--wf-accent); }
+a:hover { color: var(--wf-accent-hover); }
+
+/* ---------- Navbar ---------- */
+.app-navbar {
+    background: linear-gradient(180deg, #10141d 0%, #0d1017 100%);
+    border-bottom: 1px solid var(--wf-border);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.app-navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--wf-text) !important;
+}
+
+.app-navbar .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--wf-accent), #7c3aed);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.05rem;
+}
+
+.app-navbar .nav-link {
+    color: var(--wf-text-muted) !important;
+    font-weight: 500;
+    font-size: 0.92rem;
+    border-radius: 6px;
+    padding: 0.45rem 0.7rem !important;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.app-navbar .nav-link:hover {
+    color: var(--wf-text) !important;
+    background-color: var(--wf-surface-2);
+}
+
+.app-navbar .nav-link.active {
+    color: var(--wf-text) !important;
+    background-color: var(--wf-accent-soft);
+}
+
+.app-navbar .user-chip {
+    background: var(--wf-surface-2);
+    border: 1px solid var(--wf-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.86rem;
+    color: var(--wf-text-muted);
+}
+
+.user-chip .avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--wf-accent-soft);
+    color: var(--wf-accent-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ---------- Layout / page header ---------- */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.page-header .page-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--wf-accent-soft);
+    color: var(--wf-accent-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+}
+
+.page-subtitle {
+    color: var(--wf-text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+}
+
+/* ---------- Cards ---------- */
+.card {
+    background-color: var(--wf-surface);
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+    box-shadow: var(--wf-shadow);
+}
+
+.card-header {
+    background-color: var(--wf-surface-2);
+    border-bottom: 1px solid var(--wf-border);
+}
+
+.card.bg-dark {
+    background-color: var(--wf-surface) !important;
+}
+
+.stat-card {
+    background: linear-gradient(160deg, var(--wf-surface) 0%, var(--wf-surface-2) 100%);
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+    padding: 1.1rem 1.25rem;
+    height: 100%;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--wf-accent);
+}
+
+.stat-card .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+}
+
+.stat-card .stat-value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.stat-card .stat-label {
+    color: var(--wf-text-muted);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.icon-accent { background: var(--wf-accent-soft); color: var(--wf-accent-hover); }
+.icon-success { background: var(--wf-success-soft); color: var(--wf-success); }
+.icon-warning { background: var(--wf-warning-soft); color: var(--wf-warning); }
+.icon-danger { background: var(--wf-danger-soft); color: var(--wf-danger); }
+
+/* ---------- Tables ---------- */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--wf-text);
+    --bs-table-border-color: var(--wf-border-soft);
+    vertical-align: middle;
+}
+
+.table > thead {
+    color: var(--wf-text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--wf-border);
+}
+
+.table > tbody > tr:hover {
+    background-color: var(--wf-surface-2);
+}
+
+.table-responsive-card {
+    background-color: var(--wf-surface);
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+    box-shadow: var(--wf-shadow);
+    overflow: hidden;
+}
+
+/* ---------- Badges (status / role chips) ---------- */
+.badge-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+    font-size: 0.78rem;
+    padding: 0.35em 0.65em;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.badge-soft::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.badge-soft[data-tone="success"] { background: var(--wf-success-soft); color: var(--wf-success); }
+.badge-soft[data-tone="danger"] { background: var(--wf-danger-soft); color: var(--wf-danger); }
+.badge-soft[data-tone="warning"] { background: var(--wf-warning-soft); color: var(--wf-warning); }
+.badge-soft[data-tone="neutral"] { background: var(--wf-neutral-soft); color: var(--wf-neutral); }
+.badge-soft[data-tone="accent"] { background: var(--wf-accent-soft); color: var(--wf-accent-hover); }
+
+/* ---------- Forms ---------- */
+.form-control, .form-select {
+    background-color: var(--wf-surface-2);
+    border: 1px solid var(--wf-border);
+    color: var(--wf-text);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--wf-surface-2);
+    border-color: var(--wf-accent);
+    color: var(--wf-text);
+    box-shadow: 0 0 0 0.2rem var(--wf-accent-soft);
+}
+
+.form-control::placeholder { color: var(--wf-text-muted); opacity: 0.8; }
+
+.input-group-text {
+    background-color: var(--wf-surface-2);
+    border: 1px solid var(--wf-border);
+    color: var(--wf-text-muted);
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--wf-text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.form-check-input {
+    background-color: var(--wf-surface-2);
+    border-color: var(--wf-border);
+}
+
+.form-check-input:checked {
+    background-color: var(--wf-accent);
+    border-color: var(--wf-accent);
+}
+
+form p label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--wf-text-muted);
+    margin-bottom: 0.35rem;
+}
+
+form p { margin-bottom: 1rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: var(--wf-accent);
+    border-color: var(--wf-accent);
+}
+
+.btn-primary:hover {
+    background-color: var(--wf-accent-hover);
+    border-color: var(--wf-accent-hover);
+}
+
+.btn-outline-secondary {
+    color: var(--wf-text-muted);
+    border-color: var(--wf-border);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--wf-surface-2);
+    color: var(--wf-text);
+    border-color: var(--wf-border);
+}
+
+/* ---------- Auth pages ---------- */
+.auth-shell {
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-brand .brand-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--wf-accent), #7c3aed);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.4rem;
+}
+
+/* ---------- Alerts ---------- */
+.alert {
+    border: 1px solid var(--wf-border);
+    background-color: var(--wf-surface);
+}
+
+/* ---------- Testimonial cards ---------- */
+.testimonial-card {
+    background-color: var(--wf-surface);
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+    padding: 1.1rem 1.25rem;
+    height: 100%;
+}
+
+.testimonial-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--wf-border);
+}
+
+.testimonial-stars { color: var(--wf-warning); font-size: 0.85rem; }
+
+/* ---------- Misc ---------- */
+.text-muted-soft { color: var(--wf-text-muted) !important; }
+
+.divider-label {
+    text-align: center;
+    color: var(--wf-text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 1.25rem 0;
+}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <span class="brand-mark"><i class="bi bi-hexagon-fill"></i></span>
+                <h2 class="mb-0">Welcome back</h2>
+                <p class="text-muted-soft mb-0">Sign in to WorkFlow</p>
+            </div>
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{form | crispy}}
+                        <div class="d-grid mt-2">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+                        </div>
+                    </form>
+                    <p class="text-center text-muted-soft mt-3 mb-0">Don't have an account? <a href="/emp/sign-up/">Create one</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
