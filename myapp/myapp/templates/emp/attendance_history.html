@@ -18,7 +18,7 @@
             </div></div>
         {% else %}
             <div class="table-responsive-card">
-                <table class="table mb-0">
+                <table class="table table-stack mb-0">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -29,9 +29,9 @@
                     <tbody>
                         {% for record in records %}
                         <tr>
-                            <td>{{ record.date }}</td>
-                            <td><span class="badge-soft" data-tone="{{ record.status|status_tone }}">{{ record.get_status_display }}</span></td>
-                            <td class="text-muted-soft">{{ record.marked_by|default:"—" }}</td>
+                            <td data-label="Date">{{ record.date }}</td>
+                            <td data-label="Status"><span class="badge-soft" data-tone="{{ record.status|status_tone }}">{{ record.get_status_display }}</span></td>
+                            <td class="text-muted-soft" data-label="Marked By">{{ record.marked_by|default:"—" }}</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3" class="text-center text-muted-soft py-4">No attendance records yet.</td></tr>

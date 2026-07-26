@@ -12,7 +12,7 @@
 
         <form method="GET" class="row g-2 mb-4"
               hx-get="/emp/dashboard/" hx-target="#dashboard-content" hx-trigger="change" hx-push-url="true">
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
                 <select name="role" class="form-select">
                     <option value="">All Roles</option>
                     {% for value, label in roles %}
@@ -20,7 +20,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
                 <select name="days" class="form-select">
                     <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
                     <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>

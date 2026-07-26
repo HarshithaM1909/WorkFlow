@@ -1,4 +1,4 @@
-<table class="table table-hover mb-0">
+<table class="table table-hover table-stack mb-0">
     <thead>
     <tr>
         <th>#SN.</th>
@@ -14,26 +14,26 @@
     <tbody>
         {% for e in emps %}
         <tr>
-            <td class="text-muted-soft">{{forloop.counter}}</td>
-            <td class="fw-medium">{{e.name}}</td>
-            <td>{{e.emp_id}}</td>
-            <td>{{e.phone}}</td>
-            <td>
+            <td class="text-muted-soft cell-hide-mobile" data-label="#SN">{{forloop.counter}}</td>
+            <td class="fw-medium" data-label="Name">{{e.name}}</td>
+            <td data-label="Emp ID">{{e.emp_id}}</td>
+            <td data-label="Phone">{{e.phone}}</td>
+            <td data-label="Working">
                 {% if e.working %}
                     <span class="badge-soft" data-tone="success">Active</span>
                 {% else %}
                     <span class="badge-soft" data-tone="neutral">Inactive</span>
                 {% endif %}
             </td>
-            <td>
+            <td data-label="Role">
                 {% if e.role %}
                     <span class="badge-soft" data-tone="accent">{{e.get_role_display}}</span>
                 {% else %}
                     <span class="text-muted-soft">—</span>
                 {% endif %}
             </td>
-            <td class="text-muted-soft">{{e.address}}</td>
-            <td class="text-end">
+            <td class="text-muted-soft" data-label="Address">{{e.address}}</td>
+            <td class="text-end cell-actions" data-label="Action">
                 {% if perms.emp.change_emp %}
                     <a href="/emp/update-emp/{{e.id}}"
                     class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> Update</a>

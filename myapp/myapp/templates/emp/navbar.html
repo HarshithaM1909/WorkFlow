@@ -52,7 +52,7 @@
         {% if user.is_authenticated %}
             <span class="user-chip">
                 <span class="avatar">{{ user.username|slice:":1"|upper }}</span>
-                {{ user.username }}
+                <span class="d-none d-sm-inline">{{ user.username }}</span>
             </span>
             <form method="post" action="{% url 'logout' %}" class="d-inline">
                 {% csrf_token %}

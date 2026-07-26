@@ -21,7 +21,7 @@
             {% csrf_token %}
             <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
             <div class="table-responsive-card mb-3">
-                <table class="table mb-0">
+                <table class="table table-stack mb-0">
                     <thead>
                         <tr>
                             <th>Employee</th>
@@ -32,9 +32,9 @@
                     <tbody>
                         {% for row in rows %}
                         <tr>
-                            <td class="fw-medium">{{ row.emp.name }}</td>
-                            <td class="text-muted-soft">{{ row.emp.emp_id }}</td>
-                            <td>
+                            <td class="fw-medium" data-label="Employee">{{ row.emp.name }}</td>
+                            <td class="text-muted-soft" data-label="Emp ID">{{ row.emp.emp_id }}</td>
+                            <td class="cell-block" data-label="Status">
                                 <select name="status_{{ row.emp.id }}" class="form-select form-select-sm">
                                     {% for value, label in statuses %}
                                         <option value="{{ value }}" {% if value == row.status %}selected{% endif %}>{{ label }}</option>

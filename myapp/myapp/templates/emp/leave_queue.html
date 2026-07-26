@@ -10,7 +10,7 @@
         </div>
 
         <div class="table-responsive-card">
-            <table class="table mb-0">
+            <table class="table table-stack mb-0">
                 <thead>
                     <tr>
                         <th>Employee</th>
@@ -23,11 +23,11 @@
                 <tbody id="leave-queue-body">
                     {% for leave in leave_requests %}
                     <tr>
-                        <td class="fw-medium">{{ leave.employee.name }}</td>
-                        <td>{{ leave.start_date }}</td>
-                        <td>{{ leave.end_date }}</td>
-                        <td class="text-muted-soft">{{ leave.reason }}</td>
-                        <td class="text-end">
+                        <td class="fw-medium" data-label="Employee">{{ leave.employee.name }}</td>
+                        <td data-label="Start">{{ leave.start_date }}</td>
+                        <td data-label="End">{{ leave.end_date }}</td>
+                        <td class="text-muted-soft" data-label="Reason">{{ leave.reason }}</td>
+                        <td class="text-end cell-actions" data-label="Action">
                             <form method="post" action="/emp/leave/{{ leave.id }}/approve/" class="d-inline"
                                   hx-post="/emp/leave/{{ leave.id }}/approve/" hx-target="closest tr" hx-swap="outerHTML">
                                 {% csrf_token %}

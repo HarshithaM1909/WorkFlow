@@ -244,7 +244,74 @@ a:hover { color: var(--wf-accent-hover); }
     border: 1px solid var(--wf-border);
     border-radius: var(--wf-radius);
     box-shadow: var(--wf-shadow);
-    overflow: hidden;
+    overflow-x: auto;
+}
+
+/* ---------- Mobile card-stacking for data tables ----------
+   Applied via the `.table-stack` class. Below the breakpoint, each <tr>
+   becomes a card and each <td> becomes a label:value row using the cell's
+   `data-label` attribute - no JS, same markup/backend, just CSS. Cells that
+   hold action buttons instead of a simple value opt out of the inline
+   label via `.cell-actions`; cells marked `.cell-hide-mobile` (e.g. a
+   redundant row-number column) are dropped entirely on small screens. */
+@media (max-width: 767.98px) {
+    .table-stack thead { display: none; }
+
+    .table-stack, .table-stack tbody, .table-stack tr, .table-stack td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-stack tr {
+        margin: 0.75rem;
+        border: 1px solid var(--wf-border);
+        border-radius: var(--wf-radius);
+        padding: 0.75rem 0.9rem;
+        background-color: var(--wf-surface-2);
+    }
+
+    .table-stack tbody tr:first-child { margin-top: 0.75rem; }
+
+    .table-stack td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.4rem 0 !important;
+        border: none !important;
+        text-align: right;
+    }
+
+    .table-stack td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--wf-text-muted);
+        text-align: left;
+        margin-right: auto;
+    }
+
+    .table-stack td.cell-hide-mobile { display: none; }
+
+    /* Cells whose value doesn't suit an inline label:value row - action
+       buttons or a full-width form control - stack label above content. */
+    .table-stack td.cell-actions,
+    .table-stack td.cell-block {
+        display: block;
+        text-align: left;
+    }
+
+    .table-stack td.cell-actions::before,
+    .table-stack td.cell-block::before {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .table-stack td.cell-actions .btn { margin-bottom: 0.35rem; }
+    .table-stack td.cell-block .form-select,
+    .table-stack td.cell-block .form-control { width: 100%; }
 }
 
 /* ---------- Badges (status / role chips) ---------- */
