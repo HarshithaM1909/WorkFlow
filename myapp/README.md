@@ -1,25 +1,66 @@
 # WorkFlow
 
-A Django employee management system with role-based access control, employee testimonials, and a feedback pipeline reviewable from the admin panel.
+**A full-stack employee management platform** — role-based access control, attendance and leave tracking, a live analytics dashboard, and a documented REST API, on a dark HTMX-driven UI backed by a real production PostgreSQL database.
 
-**Live demo:** _coming soon_
+![Django](https://img.shields.io/badge/Django-6.0-092E20?style=flat&logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/Django%20REST%20Framework-red?style=flat&logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?style=flat&logo=postgresql&logoColor=white)
+![HTMX](https://img.shields.io/badge/HTMX-3D72D7?style=flat&logo=htmx&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat&logo=python&logoColor=white)
+
+**Live demo:** _coming soon_ · **API docs:** `/api/docs/` (Swagger UI)
+
+---
+
+## How it works
+
+Two Django apps share one set of models — no logic duplicated between the web app and the API:
+
+```
+Browser (+ HTMX)  ──▶  emp/  views + templates  ──┐
+                        (HTML, full or partial)    ├──▶  emp/models.py  ──▶  PostgreSQL
+API client/Swagger ──▶  api/  DRF viewsets       ──┘     (single source     (Supabase)
+                        (JSON)                             of truth)
+```
+
+- **`emp/`** owns the models, the server-rendered web app (function-based views + templates), and the permission rules. Business logic that has to stay correct in one place — like `LeaveRequest.approve()`'s guard against double-approval — lives on the model itself.
+- **`api/`** is a DRF layer over the *same* models: serializers, viewsets, a router. It calls back into the model methods above instead of re-implementing them.
+- Every write path (add employee, mark attendance, approve leave) is protected by a Django permission, checked the same way whether the request came from a browser or the API.
+- The web UI never fully reloads for search, pagination, dashboard filtering, or leave approval — Django returns an HTML partial, and HTMX swaps it into the page (`hx-get`/`hx-post`/`hx-target`).
 
 ## Features
 
-- **Authentication & role-based permissions** — custom sign up/login/logout, with add/edit/delete employee actions gated behind Django's permission framework (not just "logged in").
-- **Employee management** — full CRUD for employee records (name, ID, department, phone, address, working status), with search-by-name-or-ID and pagination.
-- **Testimonials** — visitors can submit a name, rating, and an optional photo; all testimonials are listed on a public-facing page.
-- **Feedback** — a feedback form backed by a `Feedback` model, reviewable by staff from the Django admin (`/admin/`).
-- **Email notifications** — login alerts and welcome emails sent via SMTP on sign-up and sign-in.
+- **Role-based permissions** — CRUD/approve actions gated behind Django's permission framework, not just "logged in." Roles are a fixed set of IT job titles (Software Engineer, QA Engineer, DevOps Engineer, Team Lead, etc.), each with its own dashboard breakdown.
+- **Attendance tracking** — managers mark daily status (Present/Absent/Half Day/On Leave); employees view their own history.
+- **Leave requests** — employees submit, managers approve/reject from a queue, with date validation and a guard against re-processing an already-decided request.
+- **Analytics dashboard** — headcount by role and attendance trends (Chart.js), filterable by role and date range, refreshed live via HTMX.
+- **REST API** (`/api/v1/`) — permission-scoped querysets, filtering, custom `approve`/`reject` actions, interactive Swagger docs at `/api/docs/`.
+- **Testimonials & feedback** — public submission forms, moderated from the Django admin.
+
+## Engineering highlights
+
+- Reconciled Django migrations against a production database that had **drifted outside Django's control** — `SeparateDatabaseAndState` + idempotent SQL, verified to apply cleanly on both the live drifted DB and a fresh one built from scratch.
+- Implemented **row-level scoping** that `DjangoModelPermissions` alone doesn't provide — `get_queryset()` overrides so an employee's `/api/v1/attendance/` only ever returns their own records.
+- Kept approval logic in **one place** — `LeaveRequest.approve()`/`reject()` on the model, called from both the HTMX web view and the DRF action, so the two surfaces can't drift out of sync.
+- Chose **HTMX over a SPA framework** for the UI — server-rendered partials, no client-side state management or separate JSON contract to maintain just for the frontend.
+- Ran the full test suite against **real PostgreSQL**, not SQLite — catches constraint and migration behavior SQLite would silently miss.
+- **Hardened for deployment** behind Render's reverse proxy — `SECURE_PROXY_SSL_HEADER`, HSTS/secure cookies gated on `DEBUG`, and a documented fix for Supabase's IPv6-only host being unreachable from some hosting networks.
 
 ## Tech stack
 
-- Django 6
-- PostgreSQL (hosted on Supabase) via `dj-database-url`
-- `django-crispy-forms` + `crispy-bootstrap5` for form rendering
-- Bootstrap 5 (CDN)
-- `python-decouple` for environment-based configuration
-- `pyisemail` for email validation, `Pillow` for image uploads
+**Backend:** Django 6, Django REST Framework, django-filter, drf-spectacular (OpenAPI/Swagger), django-htmx, django-crispy-forms + crispy-bootstrap5, psycopg2, dj-database-url, python-decouple, pyisemail, Pillow, gunicorn, whitenoise
+
+**Frontend:** Bootstrap 5 (dark mode), Bootstrap Icons, HTMX, Chart.js, Google Fonts (Inter) — all via CDN
+
+**Database & infra:** PostgreSQL (hosted on Supabase), Gmail SMTP, deployed on Render
+
+## Testing
+
+```
+python manage.py test emp api
+```
+
+49 tests: model validation and state-transition guards, view permissions/redirects/rendering, HTMX partial responses, and API permission scoping/filtering/custom actions — run against a real PostgreSQL database created fresh for the test run.
 
 ## Setup
 
@@ -37,7 +78,7 @@ A Django employee management system with role-based access control, employee tes
    ```
    python -m venv .venv
    .venv\Scripts\activate   # Windows
-   pip install Django dj-database-url python-decouple django-crispy-forms crispy-bootstrap5 psycopg2-binary pyisemail Pillow
+   pip install Django dj-database-url python-decouple django-crispy-forms crispy-bootstrap5 psycopg2-binary pyisemail Pillow gunicorn whitenoise djangorestframework django-filter drf-spectacular django-htmx
    ```
 
 3. **Create a `.env` file** in this folder with:
@@ -57,19 +98,6 @@ A Django employee management system with role-based access control, employee tes
    python manage.py runserver
    ```
 
-5. Visit `http://127.0.0.1:8000/emp/home/` (redirects to login) and `http://127.0.0.1:8000/admin/` for the admin panel.
+5. Visit `http://127.0.0.1:8000/` (redirects to login, then the employee list), `http://127.0.0.1:8000/admin/` for the admin panel, and `http://127.0.0.1:8000/api/docs/` for the API's interactive Swagger docs.
 
-## Deploying to Render
-
-A `render.yaml` Blueprint is included at the repo root (`rootDir: myapp`), so Render can build, migrate, collect static files, and start the app automatically.
-
-1. **Push this repo to GitHub** (Render deploys from a connected git repo).
-2. In the Render dashboard: **New → Blueprint**, select the repo. Render will read `render.yaml` and provision one web service.
-3. Set the secret environment variables Render leaves blank (`sync: false` in the blueprint) before the first deploy:
-   - `DATABASE_URL` — **use Supabase's Session Pooler connection string**, not the direct `db.<ref>.supabase.co` host. The direct host is IPv6-only, and Render's network doesn't reliably reach it (this caused intermittent connection timeouts in local testing too). Get the pooler URL from Supabase → Project Settings → Database → Connection string → "Session pooler", and set the password in it.
-   - `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` — Gmail address + app password used for login/welcome emails.
-   - `DB_PASSWORD` is only a fallback for the hardcoded direct-connection string in `settings.py` and isn't needed if `DATABASE_URL` is set.
-4. `SECRET_KEY` is auto-generated by Render on first deploy; `DEBUG` defaults to `False`. `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` pick up the Render-assigned hostname automatically via `RENDER_EXTERNAL_HOSTNAME`.
-5. Deploy. The build step runs `collectstatic`; a pre-deploy step runs `migrate` before traffic is routed to the new instance.
-
-**Known limitation:** uploaded testimonial photos are stored on local disk (`MEDIA_ROOT`), which is ephemeral on Render — files will be lost on every redeploy. Fine for a demo/portfolio deployment; swap in an object storage backend (e.g. `django-storages` + Supabase Storage or S3) before relying on it for real user uploads.
+ 
