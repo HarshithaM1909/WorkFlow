@@ -1,22 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from pyisemail import is_email
 
 from .models import LeaveRequest
-
-
-class RegisterForm(UserCreationForm):
-    email=forms.EmailField(required=True)
-    class Meta:
-        model=User
-        fields=['username','email','password1','password2']
-
-    def clean_email(self):
-        email=self.cleaned_data.get('email')
-        if not is_email(email, check_dns=True):
-            raise forms.ValidationError("Please enter a valid email address")
-        return email
 
 
 class FeedbackForm(forms.Form):

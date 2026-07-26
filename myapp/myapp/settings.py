@@ -210,7 +210,7 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL= EMAIL_HOST_USER
 # Without a timeout, a slow/unreachable SMTP connection hangs until gunicorn's worker
-# timeout (30s) kills the whole request - login/signup would 500 instead of the
+# timeout (30s) kills the whole request - login would 500 instead of the
 # surrounding try/except catching a normal, fast exception.
 EMAIL_TIMEOUT = 10
 

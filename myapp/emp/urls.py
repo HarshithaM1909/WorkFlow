@@ -12,7 +12,6 @@ urlpatterns = [
     path('add-testimonials/',testimonials),
     path('feedback/',feedback),
     path('logout/',logout_view),
-    path('sign-up/',sign_up),
 
     path('attendance/mark/', attendance_mark, name='attendance_mark'),
     path('attendance/history/', attendance_history, name='attendance_history'),

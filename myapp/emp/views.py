@@ -5,8 +5,8 @@ from django.http import HttpResponse
 from .models import Emp,Testimonial,Feedback,Attendance,LeaveRequest
 from django.db.models import Q, Count, Avg
 from django.core.paginator import Paginator
-from .form import FeedbackForm, RegisterForm, TestimonialForm, LeaveRequestForm
-from django.contrib.auth import logout, login, authenticate
+from .form import FeedbackForm, TestimonialForm, LeaveRequestForm
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 from django.utils.html import format_html
@@ -155,28 +155,6 @@ def logout_view(request):
         logout(request)
         return redirect('login')
     return redirect('home')
-
-def sign_up(request):
-    if request.method=='POST':
-        form=RegisterForm(request.POST)
-        if form.is_valid():
-            user=form.save()
-            
-            if user.email:
-                subject = 'Welcome to Employee Management'
-                message = f'Hi {user.username},\n\nThank you for signing up! Your account has been successfully created.'
-                try:
-                    html_message = render_to_string('email.html', {'user': user, 'subject': subject, 'message': message})
-                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=html_message)
-                except Exception as e:
-                    print(f"Welcome email failed to send: {e}")
-                    
-            login(request, user)
-            return redirect('/emp/home/')
-    else:
-        form=RegisterForm()
-
-    return render(request,'registration/sign_up.html',{'form':form})
 
 
 @login_required(login_url='/login')
