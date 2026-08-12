@@ -6,4 +6,4 @@ class EmpConfig(AppConfig):
 
     def ready(self):
         # Import the signals file so Django registers the receivers on startup
-        import emp.signals
+        import emp.signals  # noqa: F401

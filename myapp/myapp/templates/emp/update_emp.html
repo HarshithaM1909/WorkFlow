@@ -19,68 +19,38 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                  <label for="name" class="form-label">Employee name</label>
-                  <input
-                    id="name"
-                    type="text"
-                    class="form-control"
-                    name="emp_name"
-                    value="{{ emp.name }}"
-                  />
+                  <label for="{{ form.name.id_for_label }}" class="form-label">Employee name</label>
+                  {{ form.name }}
+                  {% for error in form.name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                 </div>
 
                 <div class="mb-3">
-                  <label for="id" class="form-label">Employee ID</label>
-                  <input
-                    id="id"
-                    type="text"
-                    class="form-control"
-                    name="emp_id"
-                    value="{{ emp.emp_id }}"
-                  />
+                  <label for="{{ form.emp_id.id_for_label }}" class="form-label">Employee ID</label>
+                  {{ form.emp_id }}
+                  {% for error in form.emp_id.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                 </div>
 
                 <div class="mb-3">
-                  <label for="phone" class="form-label">Phone number</label>
-                  <input
-                    id="phone"
-                    type="text"
-                    class="form-control"
-                    name="emp_phone"
-                    value="{{ emp.phone }}"
-                  />
+                  <label for="{{ form.phone.id_for_label }}" class="form-label">Phone number</label>
+                  {{ form.phone }}
+                  {% for error in form.phone.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                 </div>
 
                 <div class="mb-3">
-                  <label for="address" class="form-label">Address</label>
-                  <textarea
-                    name="emp_address"
-                    id="address"
-                    class="form-control"
-                    rows="4"
-                  >{{ emp.address }}</textarea>
+                  <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                  {{ form.address }}
+                  {% for error in form.address.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                 </div>
 
                 <div class="mb-3">
-                  <label for="role" class="form-label">Role</label>
-                  <select name="emp_role" id="role" class="form-select">
-                    <option value="">-- Select a role --</option>
-                    {% for value, label in roles %}
-                        <option value="{{ value }}" {% if value == emp.role %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                  </select>
+                  <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
+                  {{ form.role }}
+                  {% for error in form.role.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                 </div>
 
                 <div class="mb-4 form-check form-switch">
-                  <input
-                    id="working"
-                    type="checkbox"
-                    class="form-check-input"
-                    role="switch"
-                    name="emp_working"
-                    {% if emp.working %}checked{% endif %}
-                  />
-                  <label for="working" class="form-check-label">Currently working</label>
+                  {{ form.working }}
+                  <label for="{{ form.working.id_for_label }}" class="form-check-label">Currently working</label>
                 </div>
 
                 <div class="d-grid">

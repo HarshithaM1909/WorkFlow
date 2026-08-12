@@ -16,7 +16,7 @@ class Emp(models.Model):
         SYSTEM_ADMINISTRATOR = "SYSTEM_ADMINISTRATOR", "System Administrator"
 
     name=models.CharField(max_length=200)
-    emp_id=models.CharField(max_length=200)
+    emp_id=models.CharField(max_length=200, unique=True)
     phone=models.CharField(max_length=10)
     address=models.CharField(max_length=150)
     working=models.BooleanField(default=True)

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import dj_database_url
-import urllib.parse
 from decouple import config, Csv
  
 
@@ -235,5 +234,68 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Employee, attendance, and leave management API.',
     'VERSION': '1.0.0',
 }
+
+# Render captures stdout/stderr as logs, so a console handler is enough -
+# no file handler needed. Without this, exceptions caught and swallowed by
+# application code (e.g. the testimonial save/email-send try/excepts) leave
+# no trace anywhere in production.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': config('DJANGO_LOG_LEVEL', default='INFO'),
+            'propagate': False,
+        },
+    },
+}
+
+# Celery - sends email (and any future slow/non-critical work) off the
+# request/response cycle instead of blocking it. REDIS_URL is optional: if
+# it isn't set (e.g. no Redis add-on provisioned on the host), tasks run
+# eagerly/synchronously in-process instead of failing - same behavior as
+# before Celery was introduced, just without needing a broker to deploy.
+REDIS_URL = config('REDIS_URL', default='')
+CELERY_BROKER_URL = REDIS_URL or 'redis://localhost:6379/0'
+CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=not bool(REDIS_URL), cast=bool)
+CELERY_TASK_EAGER_PROPAGATES = True
+
+# Sentry - opt-in error tracking. Only initializes if SENTRY_DSN is set, so
+# it's a no-op for anyone running the project without a Sentry account.
+SENTRY_DSN = config('SENTRY_DSN', default='')
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.celery import CeleryIntegration
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+            CeleryIntegration(),
+            LoggingIntegration(level=None, event_level='ERROR'),
+        ],
+        traces_sample_rate=float(config('SENTRY_TRACES_SAMPLE_RATE', default='0.1')),
+        send_default_pii=False,
+        environment='development' if DEBUG else 'production',
+    )
 
     

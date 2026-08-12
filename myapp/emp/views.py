@@ -1,19 +1,19 @@
-from django.shortcuts import render,redirect
+import logging
+
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
-from django.template.loader import render_to_string
 from django.http import HttpResponse
 from .models import Emp,Testimonial,Feedback,Attendance,LeaveRequest
 from django.db.models import Q, Count, Avg
 from django.core.paginator import Paginator
-from .form import FeedbackForm, TestimonialForm, LeaveRequestForm
+from .form import EmpForm, FeedbackForm, TestimonialForm, LeaveRequestForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 from django.utils.html import format_html
 import datetime
 
-from django.core.mail import send_mail
-from django.conf import settings
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -38,38 +38,18 @@ def emp_home(request):
 @permission_required('emp.add_emp',login_url="/login", raise_exception=True)
 def add_emp(request):
     if request.method=='POST':
-        # data fetch
-        emp_name=request.POST.get('emp_name')
-        emp_id=request.POST.get('emp_id')
-        emp_phone=request.POST.get('emp_phone')
-        emp_address=request.POST.get('emp_address')
-        emp_working=request.POST.get('emp_working')
-        emp_role=request.POST.get('emp_role', '')
-
-        # create model object and set the data
-        e=Emp()
-        e.name=emp_name
-        e.emp_id=emp_id
-        e.phone=emp_phone
-        e.address=emp_address
-        e.role=emp_role
-        if emp_working is None:
-            e.working=False
-        else:
-            e.working=True
-
-
-        #save the object
-        e.save()
-
-        #prepare message
-        return redirect('/emp/home/')
-    return render(request,'emp/add_emp.html',{'roles': Emp.Role.choices})
+        form = EmpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/emp/home/')
+    else:
+        form = EmpForm()
+    return render(request,'emp/add_emp.html',{'form': form})
 
 @login_required(login_url='/login')
 @permission_required('emp.delete_emp', login_url="/login", raise_exception=True)
 def delete_emp(request,emp_id):
-    emp=Emp.objects.get(id=emp_id)
+    emp=get_object_or_404(Emp, id=emp_id)
     if request.method in ('POST', 'DELETE'):
         emp.delete()
         if request.htmx:
@@ -80,28 +60,19 @@ def delete_emp(request,emp_id):
 @login_required(login_url='/login')
 @permission_required('emp.change_emp', login_url="/login", raise_exception=True)
 def update_emp(request, emp_id):
-    emp = Emp.objects.get(pk=emp_id)
+    emp = get_object_or_404(Emp, pk=emp_id)
 
     if request.method == "POST":
-        emp.name = request.POST.get('emp_name')
-        emp.emp_id = request.POST.get('emp_id')
-        emp.phone = request.POST.get('emp_phone')
-        emp.address = request.POST.get('emp_address')
-        emp.role = request.POST.get('emp_role', '')
-
-        # checkbox handling
-        emp_working = request.POST.get('emp_working')
-        if emp_working is None:
-            emp.working = False
-        else:
-            emp.working = True
-
-        emp.save()
-        return redirect('/emp/home/')
+        form = EmpForm(request.POST, instance=emp)
+        if form.is_valid():
+            form.save()
+            return redirect('/emp/home/')
+    else:
+        form = EmpForm(instance=emp)
 
     return render(request, 'emp/update_emp.html', {
         'emp': emp,
-        'roles': Emp.Role.choices,
+        'form': form,
     })
 @login_required(login_url='/login')
 def testimonials(request):
@@ -117,11 +88,11 @@ def testimonials(request):
                     t.picture = form.cleaned_data.get('picture')
                 t.save()
                 return redirect(request.path_info)
-            except Exception as e:
-                print(f"Database Save Error: {str(e)}")
-                return HttpResponse(f"Error: {str(e)}")
+            except Exception:
+                logger.exception("Failed to save testimonial")
+                messages.error(request, "Something went wrong saving your testimonial. Please try again.")
         else:
-            print(f"Form Validation Failed! Errors: {form.errors}")
+            logger.info("Testimonial form validation failed: %s", form.errors)
     else:
         form = TestimonialForm()
     

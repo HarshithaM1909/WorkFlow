@@ -18,10 +18,38 @@ dependencies = [
     "django-filter>=26.1",
     "drf-spectacular>=0.30.0",
     "django-htmx>=1.28.0",
+    "celery>=5.4",
+    "redis>=5.0",
+    "sentry-sdk>=2.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
 ]
 
 [tool.uv]
 package = false
+
+[tool.ruff]
+line-length = 119
+target-version = "py313"
+
+[tool.ruff.lint]
+ignore = [
+    # Star imports (`from .views import *`) are load-bearing in myapp/urls.py
+    # and emp/urls.py, matching the pattern Django's own startproject/startapp
+    # templates encourage for simple URLconfs.
+    "F403", "F405",
+    # Django Meta classes and DRF viewsets declare `fields = [...]`,
+    # `permissions = [...]` etc. as class attributes by design (Django reads
+    # them off the class, never mutates a shared instance) - not the
+    # mutable-default-argument bug this rule targets.
+    "RUF012",
+    # Import-sorting only; not run against the pre-existing codebase, so
+    # enabling it would turn "add CI" into an unrelated repo-wide reformat.
+    "I001",
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

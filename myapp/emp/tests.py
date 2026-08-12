@@ -100,6 +100,10 @@ class DeleteEmpViewTests(TestCase):
         self.assertRedirects(response, '/emp/home/')
         self.assertFalse(Emp.objects.filter(id=self.emp.id).exists())
 
+    def test_get_404s_for_unknown_id(self):
+        response = self.client.get('/emp/delete-emp/999999')
+        self.assertEqual(response.status_code, 404)
+
 
 class AddEmpViewTests(TestCase):
     """Regression coverage for the orphaned `role` column bug: emp_emp had a
@@ -114,12 +118,12 @@ class AddEmpViewTests(TestCase):
 
     def test_add_emp_with_role_succeeds(self):
         response = self.client.post('/emp/add-emp/', {
-            'emp_name': 'Mallesh',
+            'name': 'Mallesh',
             'emp_id': '3',
-            'emp_phone': '9901059087',
-            'emp_address': 'Bangalore',
-            'emp_role': Emp.Role.SOFTWARE_ENGINEER,
-            'emp_working': 'on',
+            'phone': '9901059087',
+            'address': 'Bangalore',
+            'role': Emp.Role.SOFTWARE_ENGINEER,
+            'working': 'on',
         })
         self.assertRedirects(response, '/emp/home/')
         emp = Emp.objects.get(emp_id='3')
@@ -127,15 +131,66 @@ class AddEmpViewTests(TestCase):
 
     def test_add_emp_without_role_defaults_to_blank(self):
         response = self.client.post('/emp/add-emp/', {
-            'emp_name': 'Shanthala',
+            'name': 'Shanthala',
             'emp_id': '4',
-            'emp_phone': '9876543211',
-            'emp_address': 'Hesarghatta',
-            'emp_working': 'on',
+            'phone': '9876543211',
+            'address': 'Hesarghatta',
+            'working': 'on',
         })
         self.assertRedirects(response, '/emp/home/')
         emp = Emp.objects.get(emp_id='4')
         self.assertEqual(emp.role, '')
+
+    def test_add_emp_missing_name_reshows_form_with_errors(self):
+        response = self.client.post('/emp/add-emp/', {
+            'name': '',
+            'emp_id': '5',
+            'phone': '9876543212',
+            'address': 'Mysuru',
+            'working': 'on',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Emp.objects.filter(emp_id='5').exists())
+        self.assertTrue(response.context['form'].errors)
+
+    def test_add_emp_duplicate_emp_id_rejected(self):
+        make_emp(emp_id='dup-1')
+        response = self.client.post('/emp/add-emp/', {
+            'name': 'Second Person',
+            'emp_id': 'dup-1',
+            'phone': '9876543213',
+            'address': 'Mysuru',
+            'working': 'on',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Emp.objects.filter(emp_id='dup-1').count(), 1)
+        self.assertIn('emp_id', response.context['form'].errors)
+
+
+class UpdateEmpViewTests(TestCase):
+    def setUp(self):
+        self.emp = make_emp()
+        self.user = User.objects.create_user('updater', password='pw')
+        self.user.user_permissions.add(Permission.objects.get(codename='change_emp'))
+        self.client.force_login(self.user)
+
+    def test_post_updates_fields(self):
+        response = self.client.post(f'/emp/update-emp/{self.emp.id}', {
+            'name': 'Jane Updated',
+            'emp_id': self.emp.emp_id,
+            'phone': '8888888888',
+            'address': 'New Address',
+            'role': Emp.Role.TEAM_LEAD,
+            'working': 'on',
+        })
+        self.assertRedirects(response, '/emp/home/')
+        self.emp.refresh_from_db()
+        self.assertEqual(self.emp.name, 'Jane Updated')
+        self.assertEqual(self.emp.role, Emp.Role.TEAM_LEAD)
+
+    def test_get_404s_for_unknown_id(self):
+        response = self.client.get('/emp/update-emp/999999')
+        self.assertEqual(response.status_code, 404)
 
 
 class LeaveRequestViewTests(TestCase):

@@ -1,6 +1,25 @@
 from django import forms
 
-from .models import LeaveRequest
+from .models import Emp, LeaveRequest
+
+
+class EmpForm(forms.ModelForm):
+    role = forms.ChoiceField(
+        choices=[('', '-- Select a role --')] + Emp.Role.choices,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+
+    class Meta:
+        model = Emp
+        fields = ['name', 'emp_id', 'phone', 'address', 'role', 'working']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter employee name'}),
+            'emp_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter employee ID'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter address'}),
+            'working': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),
+        }
 
 
 class FeedbackForm(forms.Form):
