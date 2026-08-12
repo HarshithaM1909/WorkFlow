@@ -4,15 +4,41 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """emp_id's unique constraint (emp_emp_emp_id_09199c4e_uniq) already
+    exists on the live emp_emp table - same drift as
+    0010_reconcile_role_column: the live DB has state Django's migration
+    history never recorded going through it. A plain AlterField's CREATE
+    UNIQUE INDEX fails there with "relation already exists", but a fresh
+    database (local dev, a clean clone) never had it, so the fix has to
+    work both ways.
+    """
 
     dependencies = [
         ('emp', '0013_remove_emp_department_delete_department'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='emp',
-            name='emp_id',
-            field=models.CharField(max_length=200, unique=True),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AlterField(
+                    model_name='emp',
+                    name='emp_id',
+                    field=models.CharField(max_length=200, unique=True),
+                ),
+            ],
+            database_operations=[
+                migrations.RunSQL(
+                    sql=(
+                        "DO $$ BEGIN "
+                        "IF NOT EXISTS ("
+                        "SELECT 1 FROM pg_constraint WHERE conname = 'emp_emp_emp_id_09199c4e_uniq'"
+                        ") THEN "
+                        "ALTER TABLE emp_emp ADD CONSTRAINT emp_emp_emp_id_09199c4e_uniq UNIQUE (emp_id); "
+                        "END IF; "
+                        "END $$;"
+                    ),
+                    reverse_sql="ALTER TABLE emp_emp DROP CONSTRAINT IF EXISTS emp_emp_emp_id_09199c4e_uniq;",
+                ),
+            ],
         ),
     ]
